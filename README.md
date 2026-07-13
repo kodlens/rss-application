@@ -1,48 +1,100 @@
-# KNOWLEDGE MANAGEMENT SYSTEM (SCIENCEPH)
+# DOST-STII Hiring Portal
 
-## PACKAGES USE IN THE APPLICATION
+Public recruitment portal for the Department of Science and Technology - Science and Technology Information Institute (DOST-STII).
 
-## Chart JS
+The current welcome page provides a public vacancy board where applicants can review open job positions and proceed to a separate application page for a selected vacancy.
 
-Link/Source
-https://www.chartjs.org/docs/latest/getting-started/installation.html
+## Current Features
 
-    npm install chart.js
+- Public DOST-STII hiring landing page
+- API-driven vacancy board
+- Latest vacancy highlight card
+- Loading skeleton state while vacancies are being fetched
+- Laravel paginator support with Previous, Next, and page number controls
+- Per-vacancy Apply button using `/vacancies/{id-or-slug}/apply`
+- Footer with DOST-STII identity, quick links, and HR contact details
+- Philippine timezone configured through `APP_TIMEZONE=Asia/Manila`
 
+## Main Routes
 
-## CKEDITOR 5
-
-CKEditor License under GPL
-
-Link/Source
-https://ckeditor.com/docs/ckeditor5/latest/getting-started/installation/self-hosted/react/react-default-npm.html
-    
-```bash
-npm install ckeditor5
+```php
+GET /                  // Inertia welcome page
+GET /get-job-positions // Paginated job positions API
 ```
 
-Then, install the CKEditor5 WYSIWYG editor component for React
+The vacancy board expects `/get-job-positions` to return:
 
-    npm install @ckeditor/ckeditor5-react
+```json
+{
+  "data": {
+    "current_page": 1,
+    "data": [],
+    "from": 1,
+    "last_page": 1,
+    "per_page": 10,
+    "to": 10,
+    "total": 0
+  },
+  "success": true,
+  "message": "Job positions fetched successfully"
+}
+```
 
+## Development
 
-## LUCIDE REACT (for icons)
+Install dependencies:
 
-Link/Source
-https://lucide.dev/guide/installation
+```bash
+composer install
+npm install
+```
 
-    npm install lucide-react
+Prepare environment:
 
+```bash
+cp .env.example .env
+php artisan key:generate
+php artisan migrate
+```
 
-## DAYJS
+Run the app:
 
-Link/Source
-https://www.npmjs.com/package/dayjs
+```bash
+php artisan serve
+npm run dev
+```
 
-    npm install dayjs --save
+Or use the Composer development script:
 
+```bash
+composer run dev
+```
 
+Build frontend assets:
 
-## Typography (Tailwind)
+```bash
+npm run build
+```
 
-    npm install -D @tailwindcss/typography
+## Frontend Stack
+
+- React 19
+- Inertia.js
+- Vite
+- Tailwind CSS
+- Axios
+- Lucide React icons
+
+## Backend Stack
+
+- Laravel 12
+- PHP 8.2+
+- Laravel Sanctum
+- Ziggy
+
+## Notes
+
+- The homepage is implemented in `resources/js/pages/welcome.tsx`.
+- Job position API logic is handled by `app/Http/Controllers/JobPositionController.php`.
+- Job data is represented by `app/Models/JobPosition.php`.
+- The Apply buttons currently point to future routes such as `/vacancies/{job_position_slug}/apply` or `/vacancies/{job_position_id}/apply`.

@@ -9,6 +9,7 @@ import {
     ChevronLeft,
     ChevronRight,
     ClipboardList,
+    Eye,
     Mail,
     MapPin,
     Phone,
@@ -83,14 +84,18 @@ const getJobOffice = (job: JobPosition) => {
     return [division, section].filter(Boolean).join(' / ') || 'DOST-STII';
 };
 
-const getJobType = (job: JobPosition) => getLabel(job.status_engagement, ['status_engagement_name', 'name', 'title'], 'Not specified');
+const getJobType = (job: JobPosition) => getLabel(job.status_engagement, ['status_engagement', 'name', 'title'], 'Not specified');
 
 const getSalaryGrade = (job: JobPosition) =>
     job.salaryGrade || getLabel(job.salary_grade, ['salary_grade', 'salary_grade_name', 'name'], 'Not specified');
 
 const getDeadline = (job: JobPosition) => formatDate(job.deadline_submission ?? job.job_post_expiry);
 
-const getApplyHref = (job: JobPosition) => `/vacancies/${job.job_position_slug || job.job_position_id}/apply`;
+const getJobRouteKey = (job: JobPosition) => job.job_position_slug || job.job_position_id;
+
+const getApplyHref = (job: JobPosition) => `/career/job-application/${getJobRouteKey(job)}`;
+
+const getDetailHref = (job: JobPosition) => `/career/job-position/${getJobRouteKey(job)}`;
 
 const getPageNumbers = (currentPage: number, lastPage: number) => {
     const pages = new Set([1, lastPage, currentPage - 1, currentPage, currentPage + 1]);
@@ -279,13 +284,22 @@ export default function Welcome() {
                                             <CalendarDays className="h-4 w-4 shrink-0 text-[#005baa]" />
                                             <span className="text-sm font-medium text-slate-700">Apply until {getDeadline(latestVacancy)}</span>
                                         </div>
-                                        <a
-                                            href={getApplyHref(latestVacancy)}
-                                            className="inline-flex w-full items-center justify-center gap-2 rounded-md bg-[#005baa] px-4 py-3 text-sm font-semibold text-white transition hover:bg-[#004b8c] focus:ring-2 focus:ring-[#005baa] focus:ring-offset-2 focus:outline-none"
-                                        >
-                                            Apply to latest vacancy
-                                            <ArrowRight className="h-4 w-4" />
-                                        </a>
+                                        <div className="grid gap-2 sm:grid-cols-2">
+                                            <a
+                                                href={getDetailHref(latestVacancy)}
+                                                className="inline-flex items-center justify-center gap-2 rounded-md border border-slate-300 bg-white px-4 py-3 text-sm font-semibold text-slate-800 transition hover:border-slate-400 hover:bg-slate-50"
+                                            >
+                                                View details
+                                                <Eye className="h-4 w-4" />
+                                            </a>
+                                            <a
+                                                href={getApplyHref(latestVacancy)}
+                                                className="inline-flex items-center justify-center gap-2 rounded-md bg-[#005baa] px-4 py-3 text-sm font-semibold text-white transition hover:bg-[#004b8c] focus:ring-2 focus:ring-[#005baa] focus:ring-offset-2 focus:outline-none"
+                                            >
+                                                Apply
+                                                <ArrowRight className="h-4 w-4" />
+                                            </a>
+                                        </div>
                                     </div>
                                 ) : (
                                     <div className="mt-5 rounded-md border border-dashed border-slate-300 bg-slate-50 px-4 py-6 text-sm text-slate-600">
@@ -370,13 +384,22 @@ export default function Welcome() {
                                                     </span>
                                                 </td>
                                                 <td className="px-5 py-4 text-right align-top">
-                                                    <a
-                                                        href={getApplyHref(job)}
-                                                        className="inline-flex items-center justify-center gap-2 rounded-md bg-[#005baa] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#004b8c] focus:ring-2 focus:ring-[#005baa] focus:ring-offset-2 focus:outline-none"
-                                                    >
-                                                        Apply
-                                                        <ArrowRight className="h-4 w-4" />
-                                                    </a>
+                                                    <div className="flex flex-col justify-end gap-2 sm:flex-row">
+                                                        <a
+                                                            href={getDetailHref(job)}
+                                                            className="inline-flex items-center justify-center gap-2 rounded-md border border-slate-300 bg-white px-3 py-2 text-sm font-semibold text-slate-700 transition hover:border-slate-400 hover:bg-slate-50"
+                                                        >
+                                                            Details
+                                                            <Eye className="h-4 w-4" />
+                                                        </a>
+                                                        <a
+                                                            href={getApplyHref(job)}
+                                                            className="inline-flex items-center justify-center gap-2 rounded-md bg-[#005baa] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#004b8c] focus:ring-2 focus:ring-[#005baa] focus:ring-offset-2 focus:outline-none"
+                                                        >
+                                                            Apply
+                                                            <ArrowRight className="h-4 w-4" />
+                                                        </a>
+                                                    </div>
                                                 </td>
                                             </tr>
                                         ))
